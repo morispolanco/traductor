@@ -2,9 +2,12 @@ import streamlit as st
 import requests
 from docx import Document
 from io import BytesIO
+import os
 
 # Cambiar el título en la pestaña del navegador
 st.set_page_config(page_title="AITranslate", layout="centered")
+
+
 
 # URL base de la API de AI Translate
 BASE_URL = "https://ai-translate.pro/api"
@@ -40,7 +43,7 @@ lang_to = st.selectbox("Seleccione el idioma de destino:", ["en", "es"])
 # Botón para traducir
 if st.button("Traducir"):
     # Obtener la clave API desde los secretos
-    secret_key = st.secrets["aitranslate"]["api_key"]
+    secret_key = os.getenv("API_KEY")
 
     if secret_key and uploaded_file is not None:
         # Leer el contenido del archivo DOCX
