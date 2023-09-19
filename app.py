@@ -9,8 +9,8 @@ st.set_page_config(page_title="AITranslate", layout="centered")
 # URL base de la API de AI Translate
 BASE_URL = "https://ai-translate.pro/api"
 
-# Configurar Streamlit para usar los secretos de Render
-st.secrets["AITRANSLATE_API_KEY"] = "your-secret-key"
+# Obtener la clave API de los secretos de Render
+secret_key = st.secrets.get_secret("AITRANSLATE_API_KEY")
 
 # Función para traducir texto
 def translate_text(text, lang_from, lang_to, secret_key):
@@ -33,9 +33,8 @@ st.title("AITranslate")
 st.markdown("## La mejor traducción automática del mundo")
 st.markdown("Las redes neuronales de AITranslate son capaces de captar hasta los más mínimos matices y reproducirlos en la traducción a diferencia de cualquier otro servicio. Para evaluar la calidad de nuestros modelos de traducción automática, realizamos regularmente pruebas a ciegas. En las pruebas a ciegas, los traductores profesionales seleccionan la traducción más precisa sin saber qué empresa la produjo. AITranslate supera a la competencia por un factor de 3:1.")
 
-# Obtener la clave API de los secretos de Render
-secret_key = st.secrets["AITRANSLATE_API_KEY"]
-
+# Explicación sobre cómo obtener la clave API
+st.markdown("Para obtener la clave API de AI Translate, por favor envíe un correo electrónico a info@editorialarje.com.")
 
 # Cargar archivo DOCX
 uploaded_file = st.file_uploader("Cargar archivo DOCX", type=["docx"])
