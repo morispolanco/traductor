@@ -1,13 +1,16 @@
 import streamlit as st
 import requests
 from docx import Document
-import os
+from io import BytesIO
 
-# Obtener la clave secreta de la API desde los secrets de Streamlit
-secret_key = os.getenv("API_KEY")
+# Cambiar el título en la pestaña del navegador
+st.set_page_config(page_title="AITranslate", layout="centered")
 
 # URL base de la API de AI Translate
 BASE_URL = "https://ai-translate.pro/api"
+
+# Configurar Streamlit para usar los secretos de Render
+st.secrets["AITRANSLATE_API_KEY"] = "your-secret-key"
 
 # Función para traducir texto
 def translate_text(text, lang_from, lang_to, secret_key):
@@ -22,34 +25,49 @@ def translate_text(text, lang_from, lang_to, secret_key):
     else:
         return None, None
 
+
 # Título de la aplicación
-st.title("AI Translate")
-st.markdown("6,000 caracteres máximo por documento")
+st.title("AITranslate")
+
+# Agregar título y texto en la parte superior
+st.markdown("## La mejor traducción automática del mundo")
+st.markdown("Las redes neuronales de AITranslate son capaces de captar hasta los más mínimos matices y reproducirlos en la traducción a diferencia de cualquier otro servicio. Para evaluar la calidad de nuestros modelos de traducción automática, realizamos regularmente pruebas a ciegas. En las pruebas a ciegas, los traductores profesionales seleccionan la traducción más precisa sin saber qué empresa la produjo. AITranslate supera a la competencia por un factor de 3:1.")
+
+# Obtener la clave API de los secretos de Render
+secret_key = st.secrets["AITRANSLATE_API_KEY"]
+
 
 # Cargar archivo DOCX
 uploaded_file = st.file_uploader("Cargar archivo DOCX", type=["docx"])
 
-# Verificar si se cargó un archivo
-if uploaded_file is not None:
-    # Leer el contenido del archivo DOCX
-    docx = Document(uploaded_file)
-    text = "\n".join([paragraph.text for paragraph in docx.paragraphs])
+# Selección de idiomas
+lang_from = st.selectbox("Seleccione el idioma de origen:", ["en", "es"])
+lang_to = st.selectbox("Seleccione el idioma de destino:", ["en", "es"])
 
-    # Mostrar el contenido del archivo
-    st.text_area("Contenido del archivo", value=text)
+# Botón para traducir
+if st.button("Traducir"):
+    if secret_key and uploaded_file is not None:
+        # Leer el contenido del archivo DOCX
+        docx = Document(uploaded_file)
+        text = "\n".join([paragraph.text for paragraph in docx.paragraphs])
 
-    # Selección de idiomas
-    lang_from = st.selectbox("Seleccione el idioma de origen:", ["en", "es"])
-    lang_to = st.selectbox("Seleccione el idioma de destino:", ["en", "es"])
+        translation, available_chars = translate_text(text, lang_from, lang_to, secret_key)
+        if translation:
+            # Crear un nuevo documento DOCX con la traducción
+            translated_docx = Document()
+            translated_docx.add_paragraph(translation)
 
-    # Botón para traducir
-    if st.button("Traducir"):
-        if secret_key:
-            translation, available_chars = translate_text(text, lang_from, lang_to, secret_key)
-            if translation:
-                st.success(f"Texto traducido: {translation}")
-                st.info(f"Caracteres disponibles: {available_chars}")
-            else:
-                st.error("Error al traducir el texto. Verifique su clave secreta o intente nuevamente.")
+            # Guardar el documento DOCX en un objeto BytesIO
+            docx_buffer = BytesIO()
+            translated_docx.save(docx_buffer)
+            docx_buffer.seek(0)
+
+            # Descargar el archivo DOCX
+            st.download_button("Descargar traducción", data=docx_buffer, file_name="traduccion.docx")
+
+            st.success("La traducción se ha guardado en el archivo 'traduccion.docx'")
+            st.info(f"Caracteres disponibles: {available_chars}")
         else:
-            st.error("La clave secreta 'API_KEY' no está configurada en los secrets de Streamlit. Configúrela primero.")
+            st.error("Error al traducir el texto. Verifique su clave API o intente nuevamente.")
+    else:
+        st.error("Por favor, ingrese su clave API de AI Translate y cargue un archivo DOCX.")
