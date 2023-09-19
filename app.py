@@ -4,7 +4,7 @@ from docx import Document
 import os
 
 # Obtener la clave secreta de la API desde los secrets de Streamlit
-secret_key = os.getenv["API_KEY"]
+secret_key = os.getenv("API_KEY")
 
 # URL base de la API de AI Translate
 BASE_URL = "https://ai-translate.pro/api"
