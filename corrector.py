@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from docx import Document
 from io import BytesIO
+import json
 
 # Cambiar el título en la pestaña del navegador
 st.set_page_config(page_title="Traductor y Comparador de Texto", layout="centered")
