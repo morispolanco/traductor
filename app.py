@@ -38,8 +38,8 @@ st.markdown("Las redes neuronales de AITranslate son capaces de captar hasta los
 uploaded_file = st.file_uploader("Cargar archivo DOCX", type=["docx"])
 
 # Selección de idiomas
-lang_from = st.selectbox("Seleccione el idioma de origen:", ["en", "es"])
-lang_to = st.selectbox("Seleccione el idioma de destino:", ["en", "es"])
+lang_from = st.selectbox("Seleccione el idioma de origen:", ["en", "es", "fr"])
+lang_to = st.selectbox("Seleccione el idioma de destino:", ["en", "es", "fr"])
 
 # Botón para traducir
 if st.button("Traducir"):
